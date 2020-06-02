@@ -1,0 +1,72 @@
+To access the json elements in docker
+#docker container inspect -f '{{.NetworkSettings.IPAddress}}' <container-id>
+
+To list out all the networks on host
+#docker network ls
+
+To check a specific driver
+#docker network --filter drive=<bridge/macvlan>
+
+To find all the network drivers and their id's
+#docker network ls --format "{{.ID}}:{{.Driver}}"
+
+To get more info about the network
+#docker network inspect <network-ID>
+	It will give us info about containers using the network
+	What is the IP range
+	Subnet, Gateway
+
+To create a new network
+#docker network create <network-name>
+
+To attach a containter to network while running ot creation
+#docker container run --publish <hostPort>:<containerPort> --detached --network <network-ID/network-name> --name <container-name> <image-id>
+
+To connect an existing container which is in stopped state with a network
+#docker network connect <network-ID/network-name> <container-id/container-name>
+
+To disconnect a container with a network
+#docker network disconnect <network-ID/network-name> <container-id/container-name> 
+
+Docker is a combination of files and directories which are seperated as branches. 
+Every single image which is saved as a repository[with a identifiable name] consists series of integrated layers which use Union file system.
+
+To check the layers in the image
+#docker history <image-id>
+
+To check the complete information of a image
+#docker inspect <image-id>
+
+As Docker doesn't allow naming, 'tags' are used, basically they are version's of a image.
+To explicitly set a tag to repository.[ The image-id will still be the same]
+#docker image tag SourceRepositoryName/[:TAG] username/DestinationRepositoryName/[:TAG]
+
+ To upload the user created image process
+ #docker login
+ #docker image push <username/image-repository-name/tag-name>
+ #docker logout
+ 
+ Authorization Key will be saved at /root/.docker.config.json
+ 
+Docker File
+ 
+FROM <base-image name>
+LABEL <lablename>="version"
+RUN <What to run> --> new layer will be created and result will be the base image for further processing
+CMD ['Executable' , 'param1' , 'param2'] --> <There shall be only one cmd instruction in a docker file.  If there are two CMD the last one will be considered.
+Execute the application inside the image and make the container live>
+EXPOSE <port-no>
+ENV : env-variables
+ADD <src> <dst>
+VOLUME <can define storage configuration, mount points, DB Storage>
+WORKDIR <instruction to set workdir for run,cmd and add>
+
+# To start a container with new named volume mount point 
+docker run -d --name <container-name> -e <Enviornment-Variables> --mount source=<Name-Of-Mount>,destination='/var/lib/<MountName>' <MySQL>
+# The created mount point can be shared across multiple containers
+
+# Bind Mounts: A file or a directory which is mounted inside the container, they can be stored anywhere on the host machine.
+## even a non-docker process can access and modify the state of files and directories inside a Bind volume mount. 
+### Configurations can be shared from host machine onto docker container vise versa, but Bind Mount cannot be used inside the Dockerfile.
+###### 
+docker run -d --name <container-name> -e <Enviornment-Variables> --mount type=bind,source='PATH_inside_HOST',target='PATH_inside_CONTAINER' <MySQL>
