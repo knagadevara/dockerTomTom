@@ -37,7 +37,7 @@ Worker nodes will implement a communication/advertising protocal based on their 
 **_Docker basic architecture is a client server Model, where in docker commands are sent as commands through prompt to the daemon docker.service which implements docker remote API._**
 
    #### Single Data Center Deployment ####
-	-   _Swarm Infra HA Design, recomended to deploy docker engine on different racks._
+[^bignote]: Swarm Infra HA Design, recomended to deploy docker engine on different racks.
 
 -------------------------------------------------
 |   Rack1       |   Rack2       |   Rack3       |
@@ -118,9 +118,12 @@ Worker nodes will implement a communication/advertising protocal based on their 
 - : To deploy a service based on the catogorical count of a constraint
 		
 		docker service create --name web2 --publish 8081:80 --placement-pref=spread=node.labels.vDC --replicas 2 	nginx
-	
-- **'docker logs' will show what is happening inside the container**
-- **'docker events' will show what is happening with docker engine**
+
+
+|**'docker logs' will show what is happening inside the container**|
+|------------------------------------------------------------------|
+|**'docker events' will show what is happening with docker engine**|
+
 
 - : To save a configuration out side of the image in HA using 'Swarm Configs'
 		
@@ -130,7 +133,7 @@ Worker nodes will implement a communication/advertising protocal based on their 
 		
 		docker service create --config source=<conf-name>,target=<conf-path-in-container> 
 
-# Process to update
+### Process to update ###
 
 1. It is not possible to edit or override the existing one, so create a new config
 		
