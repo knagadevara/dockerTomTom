@@ -36,10 +36,9 @@ Worker nodes will implement a communication/advertising protocal based on their 
 
 **_Docker basic architecture is a client server Model, where in docker commands are sent as commands through prompt to the daemon docker.service which implements docker remote API._**
 
--	_Swarm Infra HA Design, recomended to deploy docker engine on different racks._
-
-
    ###### Single Data Center Deployment ######
+   _Swarm Infra HA Design, recomended to deploy docker engine on different racks._
+   
 -------------------------------------------------
 |   Rack1       |   Rack2       |   Rack3       |
 |   :---:       |   :---:       |   :---:       |
