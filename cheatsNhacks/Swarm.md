@@ -1,23 +1,20 @@
 **_Docker basic architecture is a client server Model, where in docker commands are sent as commands through prompt to the daemon docker.service which implements docker remote API. Swarm Infra HA Design, recomended to deploy docker engine on different racks._**
 
 
---
-	Rack1
-	NW-SW1
-		BM-Server1
-			docker-engine
+		Rack1
+		NW-SW1
+			BM-Server1
+				docker-engine
 
---
-	Rack2
-	NW-SW
-		BM-Server
-			docker-engine
+		Rack2
+		NW-SW
+			BM-Server
+				docker-engine
 
---
-	Rack3
-	NW-SW
-		BM-Server
-			docker-engine
+		Rack3
+		NW-SW
+			BM-Server
+				docker-engine
 
 
 ## Components of Swarm ##
@@ -96,13 +93,13 @@ Worker nodes will implement a communication/advertising protocal based on their 
 
 - : To install 'jq' on docker worker nodes multiple nodes
 		
-		_for dkr_host in $(docker node ls  --filter role=worker --format "{{json . }}" | jq '.Hostname' | tr -d 	'"') ; do ssh root@${dkr_host} 'yum install -y jq' ; done_
+		for dkr_host in $(docker node ls  --filter role=worker --format "{{json . }}" | jq '.Hostname' | tr -d 	'"') ; do ssh root@${dkr_host} 'yum install -y jq' ; done
 		
-		_docker node ls --filter role=worker  --format "{{json ."Hostname"}}"_
+		docker node ls --filter role=worker  --format "{{json ."Hostname"}}"
 
 - : To update labels in swarm for more than 1 node
 		
-		_for dkr_node in $(docker node ls -q --filter role=worker) ; do docker node update --label-rm "zone" 		--label-add "dmz=true" --label-add "public=true" ${dkr_node} ; done_
+		for dkr_node in $(docker node ls -q --filter role=worker) ; do docker node update --label-rm "zone" --label-add "dmz=true" --label-add "public=true" ${dkr_node} ; done
 
 - : To get a JSON output out of the docker command
 		
