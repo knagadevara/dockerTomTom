@@ -1,21 +1,11 @@
 **_Docker basic architecture is a client server Model, where in docker commands are sent as commands through prompt to the daemon docker.service which implements docker remote API. Swarm Infra HA Design, recomended to deploy docker engine on different racks._**
 
-
-		Rack1
-		NW-SW1
-			BM-Server1
-				docker-engine
-
-		Rack2
-		NW-SW
-			BM-Server
-				docker-engine
-
-		Rack3
-		NW-SW
-			BM-Server
-				docker-engine
-
+		|--------Single Data Center Deployment----------|
+		| 	:---        |	 :----:     |    ---: 		|
+		|	Rack1		|	Rack2	    |	Rack3	    |
+		|	NW-SW1		|	NW-SW2	    |	NW-SW3	    |
+		|	BM-Server1	|	BM-Server3	|   BM-Server3  |
+		| docker-engine | docker-engine | docker-engine |
 
 ## Components of Swarm ##
 
@@ -124,10 +114,8 @@ Worker nodes will implement a communication/advertising protocal based on their 
 - : To deploy a service based on the catogorical count of a constraint
 		
 		docker service create --name web2 --publish 8081:80 --placement-pref=spread=node.labels.vDC --replicas 2 	nginx
-
--	
-	**docker logs will show what is happening inside the container**
--	
+	
+	**docker logs will show what is happening inside the container**	
 	**docker events will show what is happening with docker engine**
 
 - : To save a configuration out side of the image in HA using 'Swarm Configs'
@@ -142,11 +130,11 @@ Worker nodes will implement a communication/advertising protocal based on their 
 
 1. It is not possible to edit or override the existing one, so create a new config
 		
-		_docker config create <conf-name.ver2> <conf-file>_
+		docker config create <conf-name.ver2> <conf-file>
 
 2. Updating it through service update command
 		
-		_docker service update --config-rm <old-conf-name> --config-add source=<conf-name.ver2>,target=<conf-path-in-container> <service-name>_
+		docker service update --config-rm <old-conf-name> --config-add source=<conf-name.ver2>,target=<conf-path-in-container> <service-name>
 
 These config's will be available on all the systems which heave raft concensus
 
