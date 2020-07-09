@@ -19,6 +19,47 @@ To get more info about the network
 To create a new network
 #docker network create <network-name>
 
+# docker network create --driver bridge  --subnet 192.168.10.0/24 overnet
+35d10d9881c770fa0095dcc9a196942258b167334ee9b822d584fe0b899e2dea
+
+# docker network ls
+NETWORK ID          NAME                DRIVER              SCOPE
+6f4a817fe6e2        bridge              bridge              local
+72f2bbba0b59        host                host                local
+d6225d984a50        none                null                local
+35d10d9881c7        overnet             bridge              local
+
+# docker inspect overnet
+[
+    {
+        "Name": "overnet",
+        "Id": "35d10d9881c770fa0095dcc9a196942258b167334ee9b822d584fe0b899e2dea",
+        "Created": "2020-06-02T11:18:58.54135637+05:30",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "192.168.10.0/24"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {},
+        "Options": {},
+        "Labels": {}
+    }
+]
+
 To attach a containter to network while running ot creation
 #docker container run --publish <hostPort>:<containerPort> --detached --network <network-ID/network-name> --name <container-name> <image-id>
 
@@ -28,45 +69,9 @@ To connect an existing container which is in stopped state with a network
 To disconnect a container with a network
 #docker network disconnect <network-ID/network-name> <container-id/container-name> 
 
-Docker is a combination of files and directories which are seperated as branches. 
-Every single image which is saved as a repository[with a identifiable name] consists series of integrated layers which use Union file system.
+Swarm Ingress Network
 
-To check the layers in the image
-#docker history <image-id>
-
-To check the complete information of a image
-#docker inspect <image-id>
-
-As Docker doesn't allow naming, 'tags' are used, basically they are version's of a image.
-To explicitly set a tag to repository.[ The image-id will still be the same]
-#docker image tag SourceRepositoryName/[:TAG] username/DestinationRepositoryName/[:TAG]
-
- To upload the user created image process
- #docker login
- #docker image push <username/image-repository-name/tag-name>
- #docker logout
+All the docker hsts can have a single overlay network with different subnets on each of the host.
+Service discovery enables each container app service to be discoverable, resolution name will be the tag-name.
+Ingress loadbalancing will enable apps to take in traffic from all the hosts where the app is deployed[replicas].
  
- Authorization Key will be saved at /root/.docker.config.json
- 
-Docker File
- 
-FROM <base-image name>
-LABEL <lablename>="version"
-RUN <What to run> --> new layer will be created and result will be the base image for further processing
-CMD ['Executable' , 'param1' , 'param2'] --> <There shall be only one cmd instruction in a docker file.  If there are two CMD the last one will be considered.
-Execute the application inside the image and make the container live>
-EXPOSE <port-no>
-ENV : env-variables
-ADD <src> <dst>
-VOLUME <can define storage configuration, mount points, DB Storage>
-WORKDIR <instruction to set workdir for run,cmd and add>
-
-# To start a container with new named volume mount point 
-docker run -d --name <container-name> -e <Enviornment-Variables> --mount source=<Name-Of-Mount>,destination='/var/lib/<MountName>' <MySQL>
-# The created mount point can be shared across multiple containers
-
-# Bind Mounts: A file or a directory which is mounted inside the container, they can be stored anywhere on the host machine.
-## even a non-docker process can access and modify the state of files and directories inside a Bind volume mount. 
-### Configurations can be shared from host machine onto docker container vise versa, but Bind Mount cannot be used inside the Dockerfile.
-###### 
-docker run -d --name <container-name> -e <Enviornment-Variables> --mount type=bind,source='PATH_inside_HOST',target='PATH_inside_CONTAINER' <MySQL>
