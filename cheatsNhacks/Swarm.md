@@ -34,6 +34,13 @@ Worker Nodes
 ------------
 Worker nodes will implement a communication/advertising protocal based on their backend or by default it will be 'gossip'. The communication between manager's and worker nodes is implemented gRPC.
 
+Swarm Ingress Network
+---------------------
+All the docker hosts can have a single overlay network with different subnets on each of the host.
+Service discovery enables each container app service to be discoverable, resolution name will be the tag-name.
+Ingress loadbalancing will enable apps to take in traffic from all the hosts where the app is deployed[replicas].
+
+
 **_Docker basic architecture is a client server Model, where in docker commands are sent as commands through prompt to the daemon docker.service which implements docker remote API._**
 
 #### Single Data Center Deployment ####
