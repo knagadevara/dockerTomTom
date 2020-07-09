@@ -1,5 +1,7 @@
-Docker is a combination of files and directories which are seperated as branches. 
-Every single image which is saved as a repository[with a identifiable name/tag] consists series of integrated layers which use Union file system.
+##### Images in Docker #####
+----------------------------
+
+Docker is a combination of files and directories which are seperated as branches. Every single image which is saved as a repository[with a identifiable name/tag] consists series of integrated layers which use Union file system.
 
 - : To pull docker images, adding an -a or --all will pull all the tags in the 'repository'
 

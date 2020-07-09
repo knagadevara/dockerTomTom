@@ -1,7 +1,7 @@
-## Docker File ##
------------------
+#### Docker File ####
+---------------------
 
-#### Syntax
+##### Syntax
 -----------
        
         FROM <base-image name> 
@@ -15,7 +15,7 @@
         VOLUME <can define storage configuration, mount points, DB Storage>
         WORKDIR <instruction to set workdir for run,cmd and add>
 
-#### Example
+##### Example
 ------------
 
         FROM alpine:3.7

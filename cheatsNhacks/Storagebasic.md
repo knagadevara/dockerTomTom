@@ -1,8 +1,7 @@
-Source: https://docs.docker.com/storage/storagedriver/select-storage-driver/
+#### Storage Docker ####
+-------------------------
 
-The default  Storage Driver: overlay2
---------------------------------------
-
+The default Storage Driver: overlay2
 - : To create a docker volume on the scame system where the daemon is running
         
         docker volume create --driver local <volume-name>
@@ -11,8 +10,10 @@ The default  Storage Driver: overlay2
         
         docker run -d --name <container-name> -e <Enviornment-Variables> --mount source=<Name-Of-Volume>,destination='/var/log/<MountName>' <Image-Name>
 
-Bind Mounts
------------
+##### Bind Mounts
+----------------
 A file or a directory which is mounted inside the container, they can be stored anywhere on the host machine, even a non-docker process can access and modify the state of files and directories inside a Bind volume mount. Configurations can be shared from host machine onto docker container vise versa, but Bind Mount cannot be used inside the Dockerfile.
 
         docker run -d --name <container-name> -e <Enviornment-Variables> --mount type=bind,source='PATH_inside_HOST',target='PATH_inside_CONTAINER' <MySQL>
+
+Source: https://docs.docker.com/storage/storagedriver/select-storage-driver/

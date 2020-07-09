@@ -1,6 +1,10 @@
+
+##### Networking in Docker #####
+--------------------------------
+
 - : To access the json elements in docker
 
-    docker container inspect -f '{{.NetworkSettings.IPAddress}}' <container-id>
+        docker container inspect -f '{{.NetworkSettings.IPAddress}}' <container-id>
 
 - : To list out all the networks on host
     
