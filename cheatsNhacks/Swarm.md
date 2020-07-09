@@ -1,11 +1,11 @@
 **_Docker basic architecture is a client server Model, where in docker commands are sent as commands through prompt to the daemon docker.service which implements docker remote API. Swarm Infra HA Design, recomended to deploy docker engine on different racks._**
 
-		|--------Single Data Center Deployment----------|
-		| 	:---        |	 :----:     |    ---: 		|
-		|	Rack1		|	Rack2	    |	Rack3	    |
-		|	NW-SW1		|	NW-SW2	    |	NW-SW3	    |
-		|	BM-Server1	|	BM-Server3	|   BM-Server3  |
-		| docker-engine | docker-engine | docker-engine |
+|--------Single Data Center Deployment----------|
+|:-------------:|:-------------:|--------------:|
+|	Rack1		|	Rack2	    |	Rack3	    |
+|	NW-SW1		|	NW-SW2	    |	NW-SW3	    |
+|	BM-Server1	|	BM-Server3	|   BM-Server3  |
+| docker-engine | docker-engine | docker-engine |
 
 ## Components of Swarm ##
 
