@@ -1,0 +1,8 @@
+## Adding docker to execute specific commands
+User_Alias  ADMINACCNT = knagadevara
+Cmnd_Alias  CONTDOCKR = /usr/bin/systemctl status docker , /usr/bin/systemctl start docker , /usr/bin/systemctl stop docker , /bin/systemctl restart docker , /usr/bin/docker
+Cmnd_Alias  POWERCOMM = /usr/sbin/init , /sbin/halt ,  /usr/sbin/shutdown , /usr/sbin/reboot , /usr/sbin/init , /usr/bin/systemctl halt -i , /usr/bin/systemctl shutdown -i , /usr/bin/systemctl reboot -i
+Cmnd_Alias  LEMOVW    = /usr/bin/less , /usr/bin/more , /usr/bin/vi , /usr/bin/vim
+docker ALL=NOEXEC: LEMOVW
+docker ALL=(root:ALL) NOPASSWD: !POWERCOMM
+docker ALL=(root:ALL) NOPASSWD: CONTDOCKR

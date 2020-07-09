@@ -1,0 +1,10 @@
+Default enviornment variables in MySQL
+"Env": [
+        "MYSQL_ROOT_PASSWORD=MyPassword"
+        "MYSQL_ALLOW_EMPTY_PASSWORD=False",
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "GOSU_VERSION=1.7",
+        "MYSQL_MAJOR=8.0",
+        "MYSQL_VERSION=8.0.19-1debian10"
+        ]
+

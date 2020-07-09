@@ -1,0 +1,19 @@
+[Unit]
+Description=Adding Global DNS Servers
+Documentation='/opt/BootScripts/document/addNameServer.doc'
+After=docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/sh /opt/BootScripts/DNS/AddNameServer.sh
+ExecStop=/usr/bin/sh /opt/BootScripts/DNS/RmvNameServer.sh
+ExecReload=/usr/bin/sh /opt/BootScripts/DNS/RmvNameServer.sh ; /usr/bin/sh /opt/BootScripts/DNS/AddNameServer.sh
+TimeoutStopSec=2
+TimeoutSec=2
+RestartSec=2
+Restart=on-failure
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target
