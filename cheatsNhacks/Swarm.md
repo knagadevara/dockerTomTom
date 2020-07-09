@@ -37,7 +37,7 @@ Worker nodes will implement a communication/advertising protocal based on their 
 **_Docker basic architecture is a client server Model, where in docker commands are sent as commands through prompt to the daemon docker.service which implements docker remote API._**
 
    #### Single Data Center Deployment ####
-   _Swarm Infra HA Design, recomended to deploy docker engine on different racks._
+	-   _Swarm Infra HA Design, recomended to deploy docker engine on different racks._
 
 -------------------------------------------------
 |   Rack1       |   Rack2       |   Rack3       |
@@ -119,8 +119,8 @@ Worker nodes will implement a communication/advertising protocal based on their 
 		
 		docker service create --name web2 --publish 8081:80 --placement-pref=spread=node.labels.vDC --replicas 2 	nginx
 	
-	**docker logs will show what is happening inside the container**	
-	**docker events will show what is happening with docker engine**
+- **'docker logs' will show what is happening inside the container**
+- **'docker events' will show what is happening with docker engine**
 
 - : To save a configuration out side of the image in HA using 'Swarm Configs'
 		
@@ -167,10 +167,10 @@ Options for extended parameters for release
 * Updating the below would while doing 'service update' will remove the present runnng container & release new,
 
 **A new image, change in storage/network drivers**
--	--constraint-add, --constraint-rm
--	--env-add, --env-rm
--	--replicas, --replicas-max-per-node
--	--publish-add, --publish-rm
--	--config-add, --config-rm
--	--secret-add, --secret-rm
--	--health-cmd, --health-interval, --health-retries, --health-start-period, --health-timeout
+-	_--constraint-add, --constraint-rm_
+-	_--env-add, --env-rm_
+-	_--replicas, --replicas-max-per-node_
+-	_--publish-add, --publish-rm_
+-	_--config-add, --config-rm_
+-	_--secret-add, --secret-rm_
+-	_--health-cmd, --health-interval, --health-retries, --health-start-period, --health-timeout_
