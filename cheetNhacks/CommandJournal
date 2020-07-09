@@ -1,2 +1,0 @@
-#pull docker images syntax
-docker pull <registery>:<repository>:<tag>
