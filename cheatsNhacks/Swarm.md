@@ -1,47 +1,50 @@
-#### Components of Swarm ####
+# Components of Swarm #
+-----------------------
 
 The Discovery Service
-------------------------
+----------------------
 It is a Key-Value Store, which keeps track of the cluster state and its configuration.
 Swarm supports a varity of key-value backends like consul, etcd, zookeeper which runs through libvkv
 if by any chance the discovery service dies, bring up a new service and let docker generate required metadata.
 To avoid such it is recommended to go HA
 
-Swarm Manager :
-----------------
+Swarm Manager
+-------------
 Swarm manager which is a cluster administrator implements Swarm API where all docker commands intended to the cluster go. acts based on the availablity of resource and its health.
 In HA it will always be 1 Primary and bunch of secondary managers, If Swarm manager dies, 
 secondary will be elected as master if there is no secondary new containers cannot be created but existing runs well.
 Implements RAFT protocol to share information persistently and stores data persistently in a common raft database which is only accessable to the manager nodes. Fault Tolerant 
 
-Filtering :
------------
+Filtering
+---------
 Gathers runtime requirements
 Affinity: 	start a container on a same node or particular node or where abc or xyz image exists or where there are xyz containers.
 Resource: 	start a container where a particular resource is free/available.
 Constraint:	mostly based on the putput returned by 'docker info' command. 
 Custom lables can be created at the image level, container level and daemon level.
 
-Scheduling :
-------------
+Scheduling
+----------
 Scheduling is a swarm wide strategy which decides where to run the container after the filtering rules are satisfied.
 Random:  Picks out random hosts to deploy container Not Recomended.
 Spread:   Default swarm scheduler, as it aims to evenly balance containers on nodes across the clusrter.
 Binpack:  Allocates containers to smallest node in a cluster till it gets maxed out on resources, then it hops to next smallest node and repeat's. Irrespective of container state[start/stop] allocated system resource is considered as used.
 
-Worker Nodes :
---------------
+Worker Nodes
+------------
 Worker nodes will implement a communication/advertising protocal based on their backend or by default it will be 'gossip'. The communication between manager's and worker nodes is implemented gRPC.
 
 **_Docker basic architecture is a client server Model, where in docker commands are sent as commands through prompt to the daemon docker.service which implements docker remote API._**
+
 -	_Swarm Infra HA Design, recomended to deploy docker engine on different racks._
 
-	|        Single Data Center Deployment          |
-	|   :---:       |   :---:       |   :---:       |
-	|   Rack1       |   Rack2       |   Rack3       |
-	|   NW-SW1      |   NW-SW2      |   NW-SW3      |
-	|   BM-Server1  |   BM-Server3  |   BM-Server3  |
-	| docker-engine | docker-engine | docker-engine |
+
+-	|        Single Data Center Deployment          |
+-	|   :---:       |   :---:       |   :---:       |
+-	|   Rack1       |   Rack2       |   Rack3       |
+-	|   NW-SW1      |   NW-SW2      |   NW-SW3      |
+-	|   BM-Server1  |   BM-Server3  |   BM-Server3  |
+-	| docker-engine | docker-engine | docker-engine |
 
 
 # Docker Swarm Ops #
