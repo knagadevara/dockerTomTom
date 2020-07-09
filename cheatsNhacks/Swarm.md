@@ -37,7 +37,7 @@ Worker nodes will implement a communication/advertising protocal based on their 
 **_Docker basic architecture is a client server Model, where in docker commands are sent as commands through prompt to the daemon docker.service which implements docker remote API._**
 
    #### Single Data Center Deployment ####
-[^bignote]: Swarm Infra HA Design, recomended to deploy docker engine on different racks.
+[^1]: Swarm Infra HA Design, recomended to deploy docker engine on different racks.
 
 -------------------------------------------------
 |   Rack1       |   Rack2       |   Rack3       |
@@ -145,11 +145,10 @@ Worker nodes will implement a communication/advertising protocal based on their 
 
 These config's will be available on all the systems which heave raft concensus
 
-### Rolling updates and Releases on existing services ###
-""The main command in focus is 'docker service update'""
-
-Options for extended parameters for release
--------------------------------------------
+#### Rolling updates and Releases on existing services (Day2 Ops) ####
+[^1]: "The_main_command_in_focus_is_'docker_service_update'
+###### Options for extended parameters for release ######
+---------------------------------------------------------
 
 * _--stop-grace-period Time to wait before forcefully killing a container and moving ahead values in numetic units of ( ms | s | m | h )_
 * _--stop-signal-string signal to stop the container_
