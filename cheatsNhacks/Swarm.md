@@ -36,10 +36,10 @@ Worker nodes will implement a communication/advertising protocal based on their 
 
 **_Docker basic architecture is a client server Model, where in docker commands are sent as commands through prompt to the daemon docker.service which implements docker remote API._**
 
-   #### Single Data Center Deployment ####
-[^1]: Swarm Infra HA Design, recomended to deploy docker engine on different racks.
+#### Single Data Center Deployment ####
+###### Swarm Infra HA Design, recomended to deploy docker engine on different racks. #####
+------------------------------------------------------------------------------------------
 
--------------------------------------------------
 |   Rack1       |   Rack2       |   Rack3       |
 |   :---:       |   :---:       |   :---:       |
 |   NW-SW1      |   NW-SW2      |   NW-SW3      |
@@ -146,17 +146,16 @@ Worker nodes will implement a communication/advertising protocal based on their 
 These config's will be available on all the systems which heave raft concensus
 
 #### Rolling updates and Releases on existing services (Day2 Ops) ####
-[^1]: "The_main_command_in_focus_is_'docker_service_update'
 ###### Options for extended parameters for release ######
 ---------------------------------------------------------
-
-* _--stop-grace-period Time to wait before forcefully killing a container and moving ahead values in numetic units of ( ms | s | m | h )_
-* _--stop-signal-string signal to stop the container_
-* _--update-delay Delay between updates_
-* _--update-failure-action ( pause | continue | rollback )_
-* _--update-max-failure-ratio - would be a anything between 0 to 1 ( .1 , .25 , .5 , .75 )_
-* _--update-order ( start-first | stop-first ) - used mostly in dev and testing phases_
-* _--update-parallelism - number of replicas to update and release, defaults to 1 at a time_
+- The main command in focus is 'docker service update'
+	* _--stop-grace-period Time to wait before forcefully killing a container and moving ahead values in numetic units of ( ms | s | m | h )_
+	* _--stop-signal-string signal to stop the container_
+	* _--update-delay Delay between updates_
+	* _--update-failure-action ( pause | continue | rollback )_
+	* _--update-max-failure-ratio - would be a anything between 0 to 1 ( .1 , .25 , .5 , .75 )_
+	* _--update-order ( start-first | stop-first ) - used mostly in dev and testing phases_
+	* _--update-parallelism - number of replicas to update and release, defaults to 1 at a time_
 
 - : To monitor X minutes before going to update the next replica and rollback if failure.
 		
@@ -167,12 +166,11 @@ These config's will be available on all the systems which heave raft concensus
 		docker service update --update-parallelism 5 --update-max-failure-ratio .25
 
 * Updating the below would while doing 'service update' will remove the present runnng container & release new,
-
-**A new image, change in storage/network drivers**
--	_--constraint-add, --constraint-rm_
--	_--env-add, --env-rm_
--	_--replicas, --replicas-max-per-node_
--	_--publish-add, --publish-rm_
--	_--config-add, --config-rm_
--	_--secret-add, --secret-rm_
--	_--health-cmd, --health-interval, --health-retries, --health-start-period, --health-timeout_
+	-   A new image, change in storage/network drivers
+	-	_--constraint-add, --constraint-rm_
+	-	_--env-add, --env-rm_
+	-	_--replicas, --replicas-max-per-node_
+	-	_--publish-add, --publish-rm_
+	-	_--config-add, --config-rm_
+	-	_--secret-add, --secret-rm_
+	-	_--health-cmd, --health-interval, --health-retries, --health-start-period, --health-timeout_
