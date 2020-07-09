@@ -38,17 +38,17 @@ Worker nodes will implement a communication/advertising protocal based on their 
 
 -	_Swarm Infra HA Design, recomended to deploy docker engine on different racks._
 
+	-------------------------------------------------
+	|        Single Data Center Deployment          |
+	|   :---:       |   :---:       |   :---:       |
+	|   Rack1       |   Rack2       |   Rack3       |
+	|   NW-SW1      |   NW-SW2      |   NW-SW3      |
+	|   BM-Server1  |   BM-Server3  |   BM-Server3  |
+	| docker-engine | docker-engine | docker-engine |
+    -------------------------------------------------
 
--	|        Single Data Center Deployment          |
--	|   :---:       |   :---:       |   :---:       |
--	|   Rack1       |   Rack2       |   Rack3       |
--	|   NW-SW1      |   NW-SW2      |   NW-SW3      |
--	|   BM-Server1  |   BM-Server3  |   BM-Server3  |
--	| docker-engine | docker-engine | docker-engine |
-
-
-# Docker Swarm Ops #
-
+### Docker Swarm Ops ###
+------------------------
 - : To start a generic swarm and advertise the IP, not recomended in production
 		
 		docker swarm init --advertise-addr 192.168.56.101
