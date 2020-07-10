@@ -11,24 +11,29 @@ To avoid such it is recommended to go HA
 ##### Swarm Manager
 -------------
 Swarm manager which is a cluster administrator implements Swarm API where all docker commands intended to the cluster go. acts based on the availablity of resource and its health.
-In HA it will always be 1 Primary and bunch of secondary managers, If Swarm manager dies, 
-secondary will be elected as master if there is no secondary new containers cannot be created but existing runs well.
-Implements RAFT protocol to share information persistently and stores data persistently in a common raft database which is only accessable to the manager nodes. Fault Tolerant 
+1. In HA it will always be 1 Primary and bunch of secondary managers, If Swarm manager dies, secondary will be elected as master if there is no secondary new containers cannot be created but existing runs well.
+2. Implements RAFT protocol to share information persistently and stores data persistently in a common raft database which is only accessable to the manager nodes. Fault Tolerant 
 
 ##### Filtering
 ---------
 Gathers runtime requirements
-Affinity: 	start a container on a same node or particular node or where abc or xyz image exists or where there are xyz containers.
-Resource: 	start a container where a particular resource is free/available.
-Constraint:	mostly based on the putput returned by 'docker info' command. 
-Custom lables can be created at the image level, container level and daemon level.
+- Affinity: 	start a container on a same node or particular node or where abc or xyz image exists or where there are xyz containers.
+- Resource: 	start a container where a particular resource is free/available.
+- Constraint:	mostly based on the putput returned by 'docker info' command. 
+- Custom lables can be created at the image level, container level and daemon level with _--label-add, --label-rm_ extened tags.
+
+Examples: all the below commands will be extension 'docker service create/update'
+
+		--filter state=( running | exited | preparing )
+		--placement-pref [ can be controlled through multiple prameters and label's ]
+		--constraint "node.hostname==xyz" --constraint "node.role==worker" --constraint node.label.<label1>==DC3
 
 ##### Scheduling
 ----------
 Scheduling is a swarm wide strategy which decides where to run the container after the filtering rules are satisfied.
-Random:  Picks out random hosts to deploy container Not Recomended.
-Spread:   Default swarm scheduler, as it aims to evenly balance containers on nodes across the clusrter.
-Binpack:  Allocates containers to smallest node in a cluster till it gets maxed out on resources, then it hops to next smallest node and repeat's. Irrespective of container state[start/stop] allocated system resource is considered as used.
+- Random:  Picks out random hosts to deploy container Not Recomended.
+- Spread:   Default swarm scheduler, as it aims to evenly balance containers on nodes across the clusrter.
+- Binpack:  Allocates containers to smallest node in a cluster till it gets maxed out on resources, then it hops to next smallest node and repeat's. Irrespective of container state[start/stop] allocated system resource is considered as used.
 
 ##### Worker Nodes
 ------------
@@ -126,11 +131,22 @@ Ingress loadbalancing will enable apps to take in traffic from all the hosts whe
 		
 		docker service create --name web2 --publish 8081:80 --placement-pref=spread=node.labels.vDC --replicas 2 	nginx
 
+- : To scale up the containers without --replicas
 
-|**'docker logs' will show what is happening inside the container**|
-|------------------------------------------------------------------|
-|**'docker events' will show what is happening with docker engine**|
+		docker service scale <service-name>=N
 
+- : 'docker logs' will show what is happening inside the container, will pull uplogs from all the places where the service is deployed.
+
+		docker service logs <service-name>
+
+- : 'docker events' will show what is happening with docker engine, will capture only 1000 events happened in swarm
+
+		docker events
+		docker events --filter service=<service-name>
+
+- : To inspect the service
+
+		docker inspect --pretty <service-name>
 
 - : To save a configuration out side of the image in HA using 'Swarm Configs'
 		
@@ -138,7 +154,7 @@ Ingress loadbalancing will enable apps to take in traffic from all the hosts whe
 
 - : To map the created config file 
 		
-		docker service create --config source=<conf-name>,target=<conf-path-in-container> 
+		docker service create --config source=<conf-name>,target=<conf-path-in-container>
 
 ### Process to update ###
 
@@ -156,13 +172,15 @@ These config's will be available on all the systems which heave raft concensus
 ###### Options for extended parameters for release ######
 ---------------------------------------------------------
 - The main command in focus is 'docker service update'
-	* _--stop-grace-period Time to wait before forcefully killing a container and moving ahead values in numetic units of ( ms | s | m | h )_
-	* _--stop-signal-string signal to stop the container_
-	* _--update-delay Delay between updates_
-	* _--update-failure-action ( pause | continue | rollback )_
-	* _--update-max-failure-ratio - would be a anything between 0 to 1 ( .1 , .25 , .5 , .75 )_
-	* _--update-order ( start-first | stop-first ) - used mostly in dev and testing phases_
-	* _--update-parallelism - number of replicas to update and release, defaults to 1 at a time_
+
+	* _--stop-grace-period_ Time to wait before forcefully killing a container and moving ahead values in numetic units of ( ms | s | m | h )
+	* _--stop-signal-string_ A string key-word signal to stop the container
+	* _--update-delay_ Delay between killing existing --> successfully starting a container --> hopping on to next container to repeat the same updates
+	* _--update-failure-action_ accepted arguments ( pause | continue | rollback )
+	* _--update-max-failure-ratio_  would be a anything between 0 to 1 ( .1 , .25 , .5 , .75 )
+	* _--update-order_ ( start-first | stop-first ) - used mostly in dev and testing phases
+	* _--update-parallelism_ - number of replicas to update and release, defaults to 1 at a time
+	* _--update-monitor_ - startup delay for the services, useful in casees where the application takes time to start before going healthy.
 
 - : To monitor X minutes before going to update the next replica and rollback if failure.
 		
@@ -173,7 +191,8 @@ These config's will be available on all the systems which heave raft concensus
 		docker service update --update-parallelism 5 --update-max-failure-ratio .25
 
 * Updating the below would while doing 'service update' will remove the present runnng container & release new,
-	-   A new image, change in storage/network drivers
+
+	-   _A new image or change in storage/network drivers_
 	-	_--constraint-add, --constraint-rm_
 	-	_--env-add, --env-rm_
 	-	_--replicas, --replicas-max-per-node_
@@ -181,3 +200,4 @@ These config's will be available on all the systems which heave raft concensus
 	-	_--config-add, --config-rm_
 	-	_--secret-add, --secret-rm_
 	-	_--health-cmd, --health-interval, --health-retries, --health-start-period, --health-timeout_
+	-   _--force_
