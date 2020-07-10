@@ -135,7 +135,7 @@ Ingress loadbalancing will enable apps to take in traffic from all the hosts whe
 
 		docker service scale <service-name>=N
 
-- : 'docker logs' will show what is happening inside the container, will pull uplogs from all the places where the service is deployed.
+- : 'docker logs' will show what is happening inside the container, will pull uplogs from all the places where the service is deployed. Logs will persist till the container is completely desroyed and removed.
 
 		docker service logs <service-name>
 
@@ -156,7 +156,9 @@ Ingress loadbalancing will enable apps to take in traffic from all the hosts whe
 		
 		docker service create --config source=<conf-name>,target=<conf-path-in-container>
 
-### Process to update ###
+#### Process to update configuration ####
+
+Recomended to maintain the system configuration via cmdb tool, so these config files can be tracked and controlled through templates
 
 1. It is not possible to edit or override the existing one, so create a new config
 		
@@ -179,6 +181,8 @@ These config's will be available on all the systems which heave raft concensus
 	* _--update-failure-action_ accepted arguments ( pause | continue | rollback )
 	* _--update-max-failure-ratio_  would be a anything between 0 to 1 ( .1 , .25 , .5 , .75 )
 	* _--update-order_ ( start-first | stop-first ) - used mostly in dev and testing phases
+		- _start-first_ - creates container x1 -> starts x1 -> destroys old container
+		- _stop-first_  - destroys old container ->  creates container x1 -> starts x1
 	* _--update-parallelism_ - number of replicas to update and release, defaults to 1 at a time
 	* _--update-monitor_ - startup delay for the services, useful in casees where the application takes time to start before going healthy.
 
@@ -192,12 +196,19 @@ These config's will be available on all the systems which heave raft concensus
 
 * Updating the below would while doing 'service update' will remove the present runnng container & release new,
 
-	-   _A new image or change in storage/network drivers_
+	-   _--image_
+	-   _--network-add, --network-rm_ 
 	-	_--constraint-add, --constraint-rm_
+	-   _--reserve-cpu, --reserve-memory_
 	-	_--env-add, --env-rm_
 	-	_--replicas, --replicas-max-per-node_
 	-	_--publish-add, --publish-rm_
 	-	_--config-add, --config-rm_
 	-	_--secret-add, --secret-rm_
-	-	_--health-cmd, --health-interval, --health-retries, --health-start-period, --health-timeout_
 	-   _--force_
+
+###### Health-Check Configuration ######
+----------------------------------------
+
+- It is always recomended to keep the default health checks in simple state instead of making it complex as it hoggg's up container resource. Enterprise level monitoring should be done by other 3rd party tools like Prometheus or New Relic or Zabbix.
+	-	_--health-cmd, --health-interval, --health-retries, --health-start-period, --health-timeout_

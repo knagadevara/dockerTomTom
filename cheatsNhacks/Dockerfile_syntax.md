@@ -13,6 +13,9 @@
         ENV : env-variables
         ADD <src> <dst>
         VOLUME <can define storage configuration, mount points, DB Storage>
+        <runs a curl command to check the health of the application in the container every N1 Seconds>
+        HEALTHCHECK --interval=N1s --timeout=N2s --start-period=N3s --retries=N4s
+                CMD curl -fs https://URL-PATH:$PORT/healthPage || exit 1
         WORKDIR <instruction to set workdir for run,cmd and add>
 
 ##### Example
