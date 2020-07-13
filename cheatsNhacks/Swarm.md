@@ -176,11 +176,11 @@ Options for extended parameters,
 
 - The main command in focus is 'docker service update'
 
-	* _--stop-grace-period_ Time to wait before forcefully killing a container and moving ahead values in numetic units of ( ms | s | m | h )
-	* _--stop-signal-string_ A string key-word signal to stop the container
-	* _--update-delay_ Delay between killing existing --> successfully starting a container --> hopping on to next container to repeat the same updates
-	* _--update-failure-action_ accepted arguments ( pause | continue | rollback )
-	* _--update-max-failure-ratio_  would be a anything between 0 to 1 ( .1 , .25 , .5 , .75 )
+	* _--stop-grace-period_ - Time to wait before forcefully killing a container and moving ahead values in numetic units of ( ms | s | m | h )
+	* _--stop-signal-string_ - A string key-word signal to stop the container
+	* _--update-delay_ - Delay between killing existing --> successfully starting a container --> hopping on to next container to repeat the same updates
+	* _--update-failure-action_ - accepted arguments ( pause | continue | rollback ) , 'rollback' is set in production. 
+	* _--update-max-failure-ratio_  - would be a anything between 0 to 1 ( .1 , .25 , .5 , .75 )
 	* _--update-order_ ( start-first | stop-first ) - used mostly in dev and testing phases
 		- _start-first_ - creates container x1 -> starts x1 -> destroys old container
 		- _stop-first_  - destroys old container ->  creates container x1 -> starts x1
@@ -213,117 +213,59 @@ Options for extended parameters,
 		12/12: running   [==================================================>]
 		verify: Service converged
 
-		docker inspect firefly
-		[
-			{
-				"ID": "wwp5uomszssbjxywqd57m2dyl",
-				"Version": {
-					"Index": 1248
-				},
-				"CreatedAt": "2020-07-13T09:27:22.45667939Z",
-				"UpdatedAt": "2020-07-13T09:30:01.703001399Z",
-				"Spec": {
-					"Name": "firefly",
-					"Labels": {},
-					"TaskTemplate": {
-						"ContainerSpec": {
-							"Image": "bretfisher/browncoat:healthcheck@sha256:1ef307dff10f94c8f0254a81b329c200c0b1e09732c65317ee2adc892fb550d0",
-							"Init": false,
-							"StopGracePeriod": 10000000000,
-							"DNSConfig": {},
-							"Isolation": "default"
-						},
-						"Resources": {
-							"Limits": {},
-							"Reservations": {}
-						},
-						"RestartPolicy": {
-							"Condition": "any",
-							"Delay": 5000000000,
-							"MaxAttempts": 0
-						},
-						"Placement": {
-							"Platforms": [
-								{
-									"Architecture": "amd64",
-									"OS": "linux"
-								}
-							]
-						},
-						"ForceUpdate": 0,
-						"Runtime": "container"
-					},
-					"Mode": {
-						"Replicated": {
-							"Replicas": 12
-						}
-					},
-					"UpdateConfig": {
-						"Parallelism": 3,
-						"Delay": 15000000000,
-						"FailureAction": "rollback",
-						"Monitor": 20000000000,
-						"MaxFailureRatio": 0.1,
-						"Order": "stop-first"
-					},
-					"RollbackConfig": {
-						"Parallelism": 1,
-						"FailureAction": "pause",
-						"Monitor": 5000000000,
-						"MaxFailureRatio": 0,
-						"Order": "stop-first"
-					},
-					"EndpointSpec": {
-						"Mode": "vip"
-					}
-				},
-				"PreviousSpec": {
-					"Name": "firefly",
-					"Labels": {},
-					"TaskTemplate": {
-						"ContainerSpec": {
-							"Image": "bretfisher/browncoat:healthcheck@sha256:1ef307dff10f94c8f0254a81b329c200c0b1e09732c65317ee2adc892fb550d0",
-							"Init": false,
-							"DNSConfig": {},
-							"Isolation": "default"
-						},
-						"Resources": {
-							"Limits": {},
-							"Reservations": {}
-						},
-						"Placement": {
-							"Platforms": [
-								{
-									"Architecture": "amd64",
-									"OS": "linux"
-								}
-							]
-						},
-						"ForceUpdate": 0,
-						"Runtime": "container"
-					},
-					"Mode": {
-						"Replicated": {
-							"Replicas": 12
-						}
-					},
-					"EndpointSpec": {
-						"Mode": "vip"
-					}
-				},
-				"Endpoint": {
-					"Spec": {}
-				}
-			}
-		]
+- All the updated values can be verified throgh 'inspect'
+
+		docker service inspect --pretty firefly
+
+		ID:             wwp5uomszssbjxywqd57m2dyl
+		Name:           firefly
+		Service Mode:   Replicated
+		Replicas:      12
+		UpdateStatus:
+		State:         rollback_completed
+		Started:       19 minutes ago
+		Message:       rollback completed
+		Placement:
+		UpdateConfig:
+		Parallelism:   3
+		Delay:         15s
+		On failure:    rollback
+		Monitoring Period: 20s
+		Max failure ratio: 0.1
+		Update order:      stop-first
+		RollbackConfig:
+		Parallelism:   1
+		On failure:    pause
+		Monitoring Period: 5s
+		Max failure ratio: 0
+		Rollback order:    stop-first
+		ContainerSpec:
+		Image:         bretfisher/browncoat:healthcheck@sha256:1ef307dff10f94c8f0254a81b329c200c0b1e09732c65317ee2adc892fb550d0
+		Init:          false
+		Resources:
+		Endpoint Mode:  vip
 
 
 - Updating the below through 'service update' will remove the present runnng container & release new,
+
+	-   _--image_
+	-   _--network-add, --network-rm_ 
+	-	_--constraint-add, --constraint-rm_
+	-   _--reserve-cpu, --reserve-memory_
+	-	_--env-add, --env-rm_
+	-	_--replicas, --replicas-max-per-node_
+	-	_--publish-add, --publish-rm_
+	-	_--config-add, --config-rm_
+	-	_--secret-add, --secret-rm_
+	-   _--force_
 		
-	Syntax:
+Syntax:
 		docker service update --image <next-ver> <service-name>
-	Example: We have update with an image which always fails health-check
+
+Example: We have update with an image which always fails health-check
+
 		docker service update --image  bretfisher/browncoat:v3.healthcheck firefly
+
 		firefly
 		overall progress: rolling back update: 12 out of 12 tasks
 		1/12: running   [>                                                  ]
@@ -340,17 +282,6 @@ Options for extended parameters,
 		12/12: running   [>                                                  ]
 		rollback: update rolled back due to failure or early termination of task tgrlopqzwf63fbsvcndnx6ltw
 		verify: Service converged		
-
-	-   _--image_
-	-   _--network-add, --network-rm_ 
-	-	_--constraint-add, --constraint-rm_
-	-   _--reserve-cpu, --reserve-memory_
-	-	_--env-add, --env-rm_
-	-	_--replicas, --replicas-max-per-node_
-	-	_--publish-add, --publish-rm_
-	-	_--config-add, --config-rm_
-	-	_--secret-add, --secret-rm_
-	-   _--force_
 
 - It is always recomended to keep the default health checks in simple state instead of making it complex as it hoggg's up container 		resource. Enterprise level monitoring should be done by other 3rd party tools like Prometheus or New Relic or Zabbix.
 
@@ -374,6 +305,5 @@ Options for extended parameters,
 
 - : In a senario where automatic rollback is set, a new release update has more failure rate it would roll back to a previous service working spec [ i.e the existing/running version] , but if a manual roll back is attempted it would return the below,
 
-
-		[root@M192168056101 ~]# docker service rollback firefly
+		docker service rollback firefly
 		Error response from daemon: rpc error: code = FailedPrecondition desc = service wwp5uomszssbjxywqd57m2dyl does not have a previous spec
