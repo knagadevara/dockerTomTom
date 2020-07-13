@@ -173,6 +173,7 @@ These config's will be available on all the systems which heave raft concensus
 #### Rolling updates and Releases on existing services (Day2 Ops) ####
 ###### Options for extended parameters for release ######
 ---------------------------------------------------------
+
 - The main command in focus is 'docker service update'
 
 	* _--stop-grace-period_ Time to wait before forcefully killing a container and moving ahead values in numetic units of ( ms | s | m | h )
@@ -194,7 +195,7 @@ These config's will be available on all the systems which heave raft concensus
 		
 		docker service update --update-parallelism 5 --update-max-failure-ratio .25
 
-* Updating the below would while doing 'service update' will remove the present runnng container & release new,
+- Updating the below through 'service update' will remove the present runnng container & release new,
 
 	-   _--image_
 	-   _--network-add, --network-rm_ 
@@ -207,8 +208,18 @@ These config's will be available on all the systems which heave raft concensus
 	-	_--secret-add, --secret-rm_
 	-   _--force_
 
-###### Health-Check Configuration ######
-----------------------------------------
+- It is always recomended to keep the default health checks in simple state instead of making it complex as it hoggg's up container 		resource. Enterprise level monitoring should be done by other 3rd party tools like Prometheus or New Relic or Zabbix.
+	- _--health-cmd_ - a custom command to determine if the app is healthy, depends on the application type.
+	- _--health-interval_ - time between the health checks.
+	- _--health-retries_ - number of retries after a failure.
+	- _--health-start-period_ - N amount of time given to he container at the start and become healthy.
+	- _--health-timeout_ - Command response wait time, to determine if the app is healthy.
 
-- It is always recomended to keep the default health checks in simple state instead of making it complex as it hoggg's up container resource. Enterprise level monitoring should be done by other 3rd party tools like Prometheus or New Relic or Zabbix.
-	-	_--health-cmd, --health-interval, --health-retries, --health-start-period, --health-timeout_
+- There are multiple options for rollling back an update if the health check is failing or the container is failing to launch
+	- _--rollback-delay_ - delay between task rollbacks (ms | s | m | h)
+	- _--rollback-failure-action_ - ( pause | continue )
+	- _--rollback-max-failure-ratio_ - maximum tollerance rate for a rollback container failure state.
+	- _--rollback-monitor_ - Duration after each container rollback to monitor for failure.
+	- _--rollback-order_ - ( start-first | stop-first )
+	- _--rollback-parallelism_ - Maximum number of tasks rolled back simultaneously.
+
