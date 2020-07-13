@@ -197,11 +197,149 @@ Options for extended parameters,
 
 - : A complete update paramerer which would not interrupt the existing container structure (no-op)
 
-		docker service update --update-delay 15s --update-failure-action rollback --update-max-failure-ratio .1 --update-order stop-first --update-parallelism 3 --update-monitor 20s <app-name>
+		docker service update --update-delay 15s --update-failure-action rollback --update-max-failure-ratio .1 --update-order stop-first --update-parallelism 3 --update-monitor 20s firefly
+		overall progress: 12 out of 12 tasks
+		1/12: running   [==================================================>]
+		2/12: running   [==================================================>]
+		3/12: running   [==================================================>]
+		4/12: running   [==================================================>]
+		5/12: running   [==================================================>]
+		6/12: running   [==================================================>]
+		7/12: running   [==================================================>]
+		8/12: running   [==================================================>]
+		9/12: running   [==================================================>]
+		10/12: running   [==================================================>]
+		11/12: running   [==================================================>]
+		12/12: running   [==================================================>]
+		verify: Service converged
+
+		docker inspect firefly
+		[
+			{
+				"ID": "wwp5uomszssbjxywqd57m2dyl",
+				"Version": {
+					"Index": 1248
+				},
+				"CreatedAt": "2020-07-13T09:27:22.45667939Z",
+				"UpdatedAt": "2020-07-13T09:30:01.703001399Z",
+				"Spec": {
+					"Name": "firefly",
+					"Labels": {},
+					"TaskTemplate": {
+						"ContainerSpec": {
+							"Image": "bretfisher/browncoat:healthcheck@sha256:1ef307dff10f94c8f0254a81b329c200c0b1e09732c65317ee2adc892fb550d0",
+							"Init": false,
+							"StopGracePeriod": 10000000000,
+							"DNSConfig": {},
+							"Isolation": "default"
+						},
+						"Resources": {
+							"Limits": {},
+							"Reservations": {}
+						},
+						"RestartPolicy": {
+							"Condition": "any",
+							"Delay": 5000000000,
+							"MaxAttempts": 0
+						},
+						"Placement": {
+							"Platforms": [
+								{
+									"Architecture": "amd64",
+									"OS": "linux"
+								}
+							]
+						},
+						"ForceUpdate": 0,
+						"Runtime": "container"
+					},
+					"Mode": {
+						"Replicated": {
+							"Replicas": 12
+						}
+					},
+					"UpdateConfig": {
+						"Parallelism": 3,
+						"Delay": 15000000000,
+						"FailureAction": "rollback",
+						"Monitor": 20000000000,
+						"MaxFailureRatio": 0.1,
+						"Order": "stop-first"
+					},
+					"RollbackConfig": {
+						"Parallelism": 1,
+						"FailureAction": "pause",
+						"Monitor": 5000000000,
+						"MaxFailureRatio": 0,
+						"Order": "stop-first"
+					},
+					"EndpointSpec": {
+						"Mode": "vip"
+					}
+				},
+				"PreviousSpec": {
+					"Name": "firefly",
+					"Labels": {},
+					"TaskTemplate": {
+						"ContainerSpec": {
+							"Image": "bretfisher/browncoat:healthcheck@sha256:1ef307dff10f94c8f0254a81b329c200c0b1e09732c65317ee2adc892fb550d0",
+							"Init": false,
+							"DNSConfig": {},
+							"Isolation": "default"
+						},
+						"Resources": {
+							"Limits": {},
+							"Reservations": {}
+						},
+						"Placement": {
+							"Platforms": [
+								{
+									"Architecture": "amd64",
+									"OS": "linux"
+								}
+							]
+						},
+						"ForceUpdate": 0,
+						"Runtime": "container"
+					},
+					"Mode": {
+						"Replicated": {
+							"Replicas": 12
+						}
+					},
+					"EndpointSpec": {
+						"Mode": "vip"
+					}
+				},
+				"Endpoint": {
+					"Spec": {}
+				}
+			}
+		]
+
 
 - Updating the below through 'service update' will remove the present runnng container & release new,
 		
+	Syntax:
 		docker service update --image <next-ver> <service-name>
+	Example: We have update with an image which always fails health-check
+		docker service update --image  bretfisher/browncoat:v3.healthcheck firefly
+		firefly
+		overall progress: rolling back update: 12 out of 12 tasks
+		1/12: running   [>                                                  ]
+		2/12: running   [>                                                  ]
+		3/12: running   [>                                                  ]
+		4/12: running   [>                                                  ]
+		5/12: running   [>                                                  ]
+		6/12: running   [>                                                  ]
+		7/12: running   [>                                                  ]
+		8/12: running   [>                                                  ]
+		9/12: running   [>                                                  ]
+		10/12: running   [>                                                  ]
+		11/12: running   [>                                                  ]
+		12/12: running   [>                                                  ]
+		rollback: update rolled back due to failure or early termination of task tgrlopqzwf63fbsvcndnx6ltw
+		verify: Service converged		
 
 	-   _--image_
 	-   _--network-add, --network-rm_ 
@@ -233,25 +371,9 @@ Options for extended parameters,
 	- _--rollback-order_ - ( start-first | stop-first )
 	- _--rollback-parallelism_ - Maximum number of tasks rolled back simultaneously.
 
-		part of Docker inspect
-		            "UpdateConfig": {
-                "Parallelism": 3,
-                "Delay": 15000000000,
-                "FailureAction": "rollback",
-                "Monitor": 20000000000,
-                "MaxFailureRatio": 0.1,
-                "Order": "stop-first"
-            },
-            "RollbackConfig": {
-                "Parallelism": 1,
-                "FailureAction": "pause",
-                "Monitor": 5000000000,
-                "MaxFailureRatio": 0,
-                "Order": "stop-first"
-            },
-            "EndpointSpec": {
-                "Mode": "vip"
-            }
-        },
+
+- : In a senario where automatic rollback is set, a new release update has more failure rate it would roll back to a previous service working spec [ i.e the existing/running version] , but if a manual roll back is attempted it would return the below,
 
 
+		[root@M192168056101 ~]# docker service rollback firefly
+		Error response from daemon: rpc error: code = FailedPrecondition desc = service wwp5uomszssbjxywqd57m2dyl does not have a previous spec
