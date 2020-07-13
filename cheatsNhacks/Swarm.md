@@ -156,9 +156,11 @@ Ingress loadbalancing will enable apps to take in traffic from all the hosts whe
 		
 		docker service create --config source=<conf-name>,target=<conf-path-in-container>
 
-#### Process to update configuration ####
+#### Process of Rolling-Releases (Day2 Ops) ####
+##### config-updates, version-upgrade #####
+---------------------------------------------------------
 
-Recomended to maintain the system configuration via cmdb tool, so these config files can be tracked and controlled through templates
+Recomended to maintain the system configuration via cmdb tool, so these config files can be tracked and controlled through templates.
 
 1. It is not possible to edit or override the existing one, so create a new config
 		
@@ -170,9 +172,7 @@ Recomended to maintain the system configuration via cmdb tool, so these config f
 
 These config's will be available on all the systems which heave raft concensus
 
-#### Rolling updates and Releases on existing services (Day2 Ops) ####
-###### Options for extended parameters for release ######
----------------------------------------------------------
+Options for extended parameters,
 
 - The main command in focus is 'docker service update'
 
@@ -209,13 +209,15 @@ These config's will be available on all the systems which heave raft concensus
 	-   _--force_
 
 - It is always recomended to keep the default health checks in simple state instead of making it complex as it hoggg's up container 		resource. Enterprise level monitoring should be done by other 3rd party tools like Prometheus or New Relic or Zabbix.
+
 	- _--health-cmd_ - a custom command to determine if the app is healthy, depends on the application type.
 	- _--health-interval_ - time between the health checks.
 	- _--health-retries_ - number of retries after a failure.
 	- _--health-start-period_ - N amount of time given to he container at the start and become healthy.
 	- _--health-timeout_ - Command response wait time, to determine if the app is healthy.
 
-- There are multiple options for rollling back an update if the health check is failing or the container is failing to launch
+- There are multiple options for rollling back an update if the health check is failing or the container is failing to launch. Rollback will always go to the previous successfull image, but if that fails in some case the machanism **rolls-forward** if another rollback is executed it would 
+
 	- _--rollback-delay_ - delay between task rollbacks (ms | s | m | h)
 	- _--rollback-failure-action_ - ( pause | continue )
 	- _--rollback-max-failure-ratio_ - maximum tollerance rate for a rollback container failure state.
