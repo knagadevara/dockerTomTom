@@ -156,7 +156,7 @@ Ingress loadbalancing will enable apps to take in traffic from all the hosts whe
 		
 		docker service create --config source=<conf-name>,target=<conf-path-in-container>
 
-#### Process of Rolling-Releases (Day2 Ops) ####
+### Process of Rolling-Releases (Day2 Ops) ###
 ##### config-updates, version-upgrade #####
 ---------------------------------------------------------
 
@@ -195,7 +195,13 @@ Options for extended parameters,
 		
 		docker service update --update-parallelism 5 --update-max-failure-ratio .25
 
+- : A complete update paramerer which would not interrupt the existing container structure (no-op)
+
+		docker service update --update-delay 15s --update-failure-action rollback --update-max-failure-ratio .1 --update-order stop-first --update-parallelism 3 --update-monitor 20s <app-name>
+
 - Updating the below through 'service update' will remove the present runnng container & release new,
+		
+		docker service update --image <next-ver> <service-name>
 
 	-   _--image_
 	-   _--network-add, --network-rm_ 
@@ -216,7 +222,9 @@ Options for extended parameters,
 	- _--health-start-period_ - N amount of time given to he container at the start and become healthy.
 	- _--health-timeout_ - Command response wait time, to determine if the app is healthy.
 
-- There are multiple options for rollling back an update if the health check is failing or the container is failing to launch. Rollback will always go to the previous successfull image, but if that fails in some case the machanism **rolls-forward** if another rollback is executed it would 
+-  If the 'service update' fails, There are multiple options for rolling back an update if the health check is failing or the container is failing to launch. Rollback will always go to the previous successfull image, but if that fails in some case and if another rollback is executed it would the machanism would **rolls-forward** releasing the present updated image. Below options can be used to have more controll on rollbacks
+
+		docker service update --rollback-order stop-first --rollback-parallelism 2  <app-name>
 
 	- _--rollback-delay_ - delay between task rollbacks (ms | s | m | h)
 	- _--rollback-failure-action_ - ( pause | continue )
@@ -224,4 +232,26 @@ Options for extended parameters,
 	- _--rollback-monitor_ - Duration after each container rollback to monitor for failure.
 	- _--rollback-order_ - ( start-first | stop-first )
 	- _--rollback-parallelism_ - Maximum number of tasks rolled back simultaneously.
+
+		part of Docker inspect
+		            "UpdateConfig": {
+                "Parallelism": 3,
+                "Delay": 15000000000,
+                "FailureAction": "rollback",
+                "Monitor": 20000000000,
+                "MaxFailureRatio": 0.1,
+                "Order": "stop-first"
+            },
+            "RollbackConfig": {
+                "Parallelism": 1,
+                "FailureAction": "pause",
+                "Monitor": 5000000000,
+                "MaxFailureRatio": 0,
+                "Order": "stop-first"
+            },
+            "EndpointSpec": {
+                "Mode": "vip"
+            }
+        },
+
 
