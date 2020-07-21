@@ -27,15 +27,15 @@ Docker Network 'defaults'
     
         docker network inspect <network-ID>
 
-- : To create a new network
+- : To create a new network. [ Ideally only one application stack should be isolated to a custom-network ] 
     
-        docker network create <network-name>
+        docker network create <network-name> --driver
 
 - : To attach a containter to network while running ot creation
  
         docker container run --publish <hostPort>:<containerPort> --detached --network <network-ID/network-name> --name <container-name> <image-id>
 
-- : To connect an existing container which is in stopped state with a network
+- : To connect an existing container [ better if it is in stopped state ] with a network
         
         docker network connect <network-ID/network-name> <container-id/container-name>
 
@@ -92,4 +92,28 @@ Example:
             }
         ]
 
+- As containers are ephimeral in nature, inter-communicating through static IP is not standard. Every container/service/stack name should be unique as it will be mapped to a internal container IP, which would be updated later if container gets destroyed.
 
+- Communication between container/service/stack belonging to the same custom-defined network is possible without a need to expose/publish the ports, but the default 'bridge' network will not allow that for security reasons, so, to enable inter-communication '--link' option is used.
+        docker container run --name <container-1> --link <container-2> <image>
+
+- : Senario DNS Round-Robin
+
+        docker network create web-layer
+
+        docker volume create webs1-docs
+        docker volume create webs2-docs
+
+
+        docker container create --name webServer1 --network-alias aixweb --network web-layer --expose 80 --volume webs1-docs:/usr/local/apache2/htdocs/ httpd:2.4-alpine
+
+        docker container create --name webServer2 --network-alias aixweb --network web-layer --expose 80 --volume webs2-docs:/usr/local/apache2/htdocs/ httpd:2.4-alpine
+
+        docker container start webServer1
+        docker container start webServer2
+
+        docker container run --detach --tty --name proxy_testr --network web-layer --publish 80:80 --volume /opt/docker/conf/nginx.conf:/etc/nginx/nginx.conf:ro nginx:stable-alpine
+
+        docker container run --detach --tty --name curl_testr --network web-layer centos
+
+        docker container exec curl_testr curl -sS aixweb

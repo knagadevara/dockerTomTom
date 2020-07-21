@@ -256,6 +256,7 @@ Options for extended parameters,
 	-	_--replicas, --replicas-max-per-node_
 	-	_--publish-add, --publish-rm_
 	-	_--config-add, --config-rm_
+			docker service update --config-rm <old-config> --config-add <new-config> LAMP_proxy-layer
 	-	_--secret-add, --secret-rm_
 	-   _--force_
 		
