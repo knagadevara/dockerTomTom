@@ -1,10 +1,15 @@
 
-##### Networking in Docker #####
---------------------------------
+### Networking in Docker ###
+----------------------------
+
+Docker Network 'defaults'
+- Each container is connected to a private virtual network called 'Bridge'.
+- Each Virtual network will make use of NAT firewall setup 'many to one' [ vnetwork mapped to Host IP ]
+- Containers which belong to same network can communicate 
 
 - : To access the json elements in docker
 
-        docker container inspect -f '{{.NetworkSettings.IPAddress}}' <container-id>
+        docker container inspect --format '{{.NetworkSettings.IPAddress}}' <container-id>
 
 - : To list out all the networks on host
     
@@ -36,7 +41,11 @@
 
 - : To disconnect a container with a network
     
-        docker network disconnect <network-ID/network-name> <container-id/container-name>  
+        docker network disconnect <network-ID/network-name> <container-id/container-name>
+
+- : To check which ports are exposed on the container
+        
+        docker container port <app-name>
 
 Example:
 --------
@@ -82,3 +91,5 @@ Example:
                 "Labels": {}
             }
         ]
+
+

@@ -281,7 +281,8 @@ Example: We have update with an image which always fails health-check
 		11/12: running   [>                                                  ]
 		12/12: running   [>                                                  ]
 		rollback: update rolled back due to failure or early termination of task tgrlopqzwf63fbsvcndnx6ltw
-		verify: Service converged		
+		verify: Service converged
+Note: **rollback: update rolled back due to failure or early termination of task tgrlopqzwf63fbsvcndnx6ltw**
 
 - It is always recomended to keep the default health checks in simple state instead of making it complex as it hoggg's up container 		resource. Enterprise level monitoring should be done by other 3rd party tools like Prometheus or New Relic or Zabbix.
 
