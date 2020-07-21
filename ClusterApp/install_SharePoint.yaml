@@ -1,4 +1,0 @@
----
-    - hosts: worker-nodes, master-nodes
-      remote_user: root
-      become: yes
