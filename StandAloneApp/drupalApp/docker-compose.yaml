@@ -1,0 +1,41 @@
+version: "3.8"
+networks:
+    proxyFront:
+    dbBack:
+volumes:
+    psql-volume:
+services:
+
+    post_db:
+        image: postgres:9.6-alpine
+        networks:
+            - dbBack
+        volumes:
+            - type: volume
+              source: psql-volume
+              target: /var/lib/postgresql/data
+        environment:
+            POSTGRES_DB: drupalDBprd
+            POSTGRES_USER: iamaghost
+            POSTGRES_PASSWORD: minamikar
+
+    content_mgr:
+        image: drupal:apache
+        networks:
+           - proxyFront
+           - dbBack
+        ports:
+           - "8080:80"
+        depends_on:
+            - post_db
+
+    proxy-layer:
+        build:
+            context: .
+            dockerfile: nginxProxy_dockerfile
+        networks:
+            - proxyFront
+        ports:
+            - "80:80"
+        depends_on:
+            - content_mgr
