@@ -35,3 +35,7 @@
         WORKDIR /usr/share/nginx/html
         COPY htdocs htdocs
         CMD [ "nginx" , "-g" , "daemon off;" ]
+
+- : Best way to deal with logs os to have them directly log out into the container stdout/stderr
+        
+        RUN ls -sf /dev/stdout /var/log/app/access.log && ls -sf /dev/sterr /var/log/app/error.log

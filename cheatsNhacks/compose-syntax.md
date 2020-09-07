@@ -57,4 +57,5 @@
         docker-compose up --build -d
 
 note: stack commands do not work if they have build included
+
         Ignoring unsupported options: build
