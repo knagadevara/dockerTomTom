@@ -25,7 +25,7 @@ RUN  chmod +x /usr/local/bin/test.sh
 
 ## Testing entrypoint
 ENTRYPOINT ["test.sh"]
-CMD ["python" , "manage.py" , "test" , "--no-input"]
+CMD ["python" , "manage.py" , "test" ]
 
 ## Copying the application Source code
 COPY src /application
