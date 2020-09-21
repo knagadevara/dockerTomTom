@@ -1,0 +1,55 @@
+version: "3.8"
+networks:
+    dbBack:
+volumes:
+    mysql-volume:
+    pip_cache:
+services:
+    ansible_probing_agent:
+        build:
+          context: ../../../
+          dockerfile: Dockerfiles/todoBuild/DevImg/AnsibleDockerfile
+        networks:
+            - dbBack
+        volumes:
+            - type: bind
+              source: Dockerfiles/todoBuild/DevImageansible_DB_AgentCheck.yaml
+              target: /ansible/DevImageansible_DB_AgentCheck.yaml
+        enbiornment:
+            - PROBE_PORT=3306
+            - PROBE_DELAY=5
+            - PROBE_TIMEOUT=90
+                           
+    mysql_db:
+        image: mysql:5.7
+        networks:
+            - dbBack
+        volumes:
+            - type: volume
+              source: mysql-volume
+              target: /var/lib/mysql
+        environment:
+          - DJANGO_SETTINGS_MODULE=todobakend.settings.testSettings
+          - MYSQL_DATABASE=todobackend
+          - MYSQL_ROOT_PASSWORD=password
+        expose:
+          - "3306"
+
+    django_tester:
+        build:
+          context: ../../../
+          dockerfile: Dockerfiles/todoBuild/DevImg/Dockerfile
+        networks:
+           - dbBack
+        volumes:
+           - type: volume
+             source: pip_cache
+             target: /cache
+        depends_on:
+            - mysql_db
+        environment:
+          - MYSQL_DBNAME=todobackend
+          - MYSQL_USER=root
+          - MYSQL_PASSWORD=password
+          - MYSQL_HOST=mysql_db
+          - TEST_OUTPUT_DIR=/reports
