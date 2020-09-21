@@ -1,0 +1,22 @@
+---
+- hosts: APP_Server
+  vars:
+  tasks:
+    - name: "Set Variables to Pass on the next task"
+      set_fact:
+        probe_db_host: "{{ lookup( 'env' , 'PROBE_HOST' ) }}"
+        probe_db_port: "{{ lookup( 'env' , 'PROBE_PORT' ) }}"
+        probe_delay: "{{ lookup( 'env' , 'PROBE_DELAY' ) | default(0, true) }}"
+        probe_timeout: "{{ lookup( 'env' , 'PROBE_TIMEOUT' ) | default(100, true) }}"
+
+    - name: "Initialized Values"
+      debug:
+        msg: "Probbing on DB Servers with delay: {{ probe_delay }} , timeout: {{ probe_timeout }} "
+
+    - name: "Check if the Host Port is open"
+      with_items: "{{ groups['DB_Server'] }}"
+      delegate_to: "{{ item }}"
+      wait_for:
+        port: "{{ probe_db_port }}"
+        delay: "{{ probe_delay }}"
+        timeout: "{{ probe_timeout }}"
