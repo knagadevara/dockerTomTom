@@ -6,7 +6,7 @@ MAINTAINER Bruce Wayne
 ENV TERM=xterm-256color
 
 RUN apt-get update && \
-    apt-get install -qy python-dev libmysqlclient-dev
+    apt-get install -qy apt-get install -qy python-dev python3-dev libmysqlclient-dev libssl-dev libffi-dev 
 
 ## Activate virtual enviornment and install Wheel
 RUN . /appenv/bin/activate && \
